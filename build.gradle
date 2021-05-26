@@ -31,10 +31,7 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 
-	modImplementation("com.github.qouteall.ImmersivePortalsMod:imm_ptl_core:${project.ip_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
-	include("com.github.qouteall.ImmersivePortalsMod:imm_ptl_core:${project.ip_version}")
+
 
 	modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}") {
 		exclude(module: "fabric-api")

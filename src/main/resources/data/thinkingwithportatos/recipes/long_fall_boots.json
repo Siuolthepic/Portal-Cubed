@@ -1,25 +1,26 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "#N#",
-    " S ",
-    " A "
+    " # ",
+    "iNi",
+    " S "
   ],
   "key": {
     "#": {
-      "item": "minecraft:feather"
+      "item": "minecraft:phantom_membrane"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
     },
     "N": {
       "item": "minecraft:netherite_boots"
     },
     "S": {
-      "item": "minecraft:slime_block"
-    },
-    "A": {
-      "item": "minecraft:anvil"
+      "item": "minecraft:slime_ball"
     }
   },
   "result": {
-    "item": "thinkingwithportatos:long_fall_boots"
+    "item": "thinkingwithportatos:long_fall_boots",
+    "count": 1
   }
 }

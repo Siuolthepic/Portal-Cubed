@@ -1,26 +1,17 @@
 package com.fusionflux.thinkingwithportatos.mixin;
 
 import com.fusionflux.thinkingwithportatos.ThinkingWithPortatos;
-import com.fusionflux.thinkingwithportatos.entity.CustomPortalEntity;
-import com.fusionflux.thinkingwithportatos.entity.PortalPlaceholderEntity;
 import com.fusionflux.thinkingwithportatos.items.ThinkingWithPortatosItems;
-import com.fusionflux.thinkingwithportatos.sound.ThinkingWithPortatosSounds;
-import com.qouteall.immersive_portals.teleportation.CollisionHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -100,21 +91,7 @@ if(!this.isFallFlying()) {
         this.setVelocity(this.getVelocity().add(0, reduceGravity * gravityBalancer, 0));
     }
 }*/
-        if (!world.isClient) {
 
-            if (CollisionHelper.isCollidingWithAnyPortal(this) && !recentlyTouchedPortal) {
-                //world.playSound(null, this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), ThinkingWithPortatosSounds.ENTITY_ENTER_PORTAL, SoundCategory.NEUTRAL, .1F, 1F);
-                recentlyTouchedPortal = true;
-            }
-            if (!CollisionHelper.isCollidingWithAnyPortal(this) && recentlyTouchedPortal) {
-                //world.playSound(null, this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), ThinkingWithPortatosSounds.ENTITY_EXIT_PORTAL, SoundCategory.NEUTRAL, .1F, 1F);
-                recentlyTouchedPortal = false;
-            }
-
-            if (this.isHolding(ThinkingWithPortatosItems.PORTAL_GUN)) {
-                world.playSound(null, this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), ThinkingWithPortatosSounds.PORTAL_AMBIANT_EVENT, SoundCategory.NEUTRAL, .001F, 1F);
-            }
-        }
         storeVelocity2 = storeVelocity1;
         storeVelocity1 = this.getVelocity();
 
@@ -128,39 +105,7 @@ if(!this.isFallFlying()) {
         }
     }
 
-    @Inject(method = "dropItem(Lnet/minecraft/item/ItemStack;ZZ)Lnet/minecraft/entity/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getEyeY()D"), cancellable = true)
-    public void dropItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership, CallbackInfoReturnable<@Nullable ItemEntity> cir) {
-        if (!this.world.isClient && stack.getItem().equals(ThinkingWithPortatosItems.PORTAL_GUN)) {
-            CompoundTag tag = stack.getOrCreateTag();
-            CompoundTag portalsTag = tag.getCompound(world.getRegistryKey().toString());
-            CustomPortalEntity portalholder;
-            if (portalsTag.contains(("Left") + "Portal")) {
-                portalholder = (CustomPortalEntity) ((ServerWorld) world).getEntity(portalsTag.getUuid(("Left") + "Portal"));
-                if (portalholder != null) {
-                    portalholder.kill();
-                }
-            }
-            if (portalsTag.contains(("Right") + "Portal")) {
-                portalholder = (CustomPortalEntity) ((ServerWorld) world).getEntity(portalsTag.getUuid(("Right") + "Portal"));
-                if (portalholder != null) {
-                    portalholder.kill();
-                }
-            }
-            PortalPlaceholderEntity portalOutline;
-            if (portalsTag.contains(("Left") + "Background")) {
-                portalOutline = (PortalPlaceholderEntity) ((ServerWorld) world).getEntity(portalsTag.getUuid(("Left") + "Background"));
-                if (portalOutline != null) {
-                    portalOutline.kill();
-                }
-            }
-            if (portalsTag.contains(("Right") + "Background")) {
-                portalOutline = (PortalPlaceholderEntity) ((ServerWorld) world).getEntity(portalsTag.getUuid(("Right") + "Background"));
-                if (portalOutline != null) {
-                    portalOutline.kill();
-                }
-            }
-        }
-    }
+
 
 }
 

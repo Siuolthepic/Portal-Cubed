@@ -1,24 +1,17 @@
 package com.fusionflux.thinkingwithportatos.mixin;
 
-import com.fusionflux.thinkingwithportatos.ThinkingWithPortatos;
-import com.fusionflux.thinkingwithportatos.accessor.EntityPortalsAccess;
 import com.fusionflux.thinkingwithportatos.accessor.VelocityTransfer;
 import com.fusionflux.thinkingwithportatos.blocks.RepulsionGel;
 import com.fusionflux.thinkingwithportatos.blocks.ThinkingWithPortatosBlocks;
-import com.fusionflux.thinkingwithportatos.entity.CustomPortalEntity;
 import com.fusionflux.thinkingwithportatos.entity.EntityAttachments;
-import com.fusionflux.thinkingwithportatos.entity.PortalPlaceholderEntity;
 import com.fusionflux.thinkingwithportatos.sound.ThinkingWithPortatosSounds;
-import com.google.common.collect.Lists;
-import com.qouteall.immersive_portals.teleportation.CollisionHelper;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -30,13 +23,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.List;
-import java.util.UUID;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityAttachments, VelocityTransfer, EntityPortalsAccess {
+public abstract class EntityMixin implements EntityAttachments, VelocityTransfer {
     @Shadow
     public World world;
     @Shadow
@@ -57,8 +46,7 @@ public abstract class EntityMixin implements EntityAttachments, VelocityTransfer
     private double speedTransformApply = 0;
     @Unique
     private boolean recentlyTouchedPortal;
-    @Unique
-    private final List<CustomPortalEntity> portalList = Lists.newArrayList();
+
 
     @Override
     public double getMaxFallSpeed() {
@@ -114,66 +102,17 @@ public abstract class EntityMixin implements EntityAttachments, VelocityTransfer
     public abstract boolean isSneaking();
 
 
-    @Override
-    public List<CustomPortalEntity> getPortalList() {
-        return portalList;
-    }
 
-    @Override
-    public void addPortalToList(CustomPortalEntity portal) {
-        portalList.add(portal);
-    }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(CallbackInfo ci) {
-        Vec3d expand = this.getVelocity().multiply(10);
-        Box streachedBB = this.getBoundingBox().stretch(expand);
 
-        List<CustomPortalEntity> globalPortals = this.world.getEntitiesByClass(CustomPortalEntity.class, streachedBB, null);
 
-        for (CustomPortalEntity globalPortal : globalPortals) {
-            if (streachedBB.intersects(globalPortal.getBoundingBox())) {
-                Vec3d portalFacing = new Vec3d((int) globalPortal.getNormal().getX(), (int) globalPortal.getNormal().getY(), (int) globalPortal.getNormal().getZ());
-                double offsetX = 0;
-                double offsetZ = 0;
-                double offsetY = 0;
 
-                Box streachedPortalBB = globalPortal.getBoundingBox().stretch(portalFacing.getX() * Math.abs(this.getVelocity().getX())*10, portalFacing.getY() * Math.abs(this.getVelocity().getY())*10, portalFacing.getZ() * Math.abs(this.getVelocity().getZ())*10);
-                if (streachedPortalBB.intersects(this.getBoundingBox())){
-                    if (Math.abs(this.getVelocity().y) > Math.abs(this.getVelocity().x) || Math.abs(this.getVelocity().z) > Math.abs(this.getVelocity().x)) {
-                        offsetX = (this.getBoundingBox().getCenter().x - globalPortal.getBoundingBox().getCenter().x) * .05;
-                    }
-                if (Math.abs(this.getVelocity().y) > Math.abs(this.getVelocity().z) || Math.abs(this.getVelocity().x) > Math.abs(this.getVelocity().z)) {
-                    offsetZ = (this.getBoundingBox().getCenter().z - globalPortal.getBoundingBox().getCenter().z) * .05;
-                }
-                if (Math.abs(this.getVelocity().z) > Math.abs(this.getVelocity().y) || Math.abs(this.getVelocity().x) > Math.abs(this.getVelocity().y)) {
-                    offsetY = (this.getBoundingBox().getCenter().y - globalPortal.getBoundingBox().getCenter().y) * .05;
-                }
-                if (!this.getBoundingBox().intersects(globalPortal.getBoundingBox()) && !this.isSneaking())
-                    this.setVelocity(this.getVelocity().add(-offsetX, -offsetY, -offsetZ));
-            }
-            }
-        }
 
-        if (!world.isClient) {
 
-            List<Entity> portalSound = this.world.getEntitiesByClass(CustomPortalEntity.class, this.getBoundingBox().expand(2), null);
 
-            for (Entity globalportal : portalSound) {
-                CustomPortalEntity collidingportal = (CustomPortalEntity) globalportal;
-                collidingportal.getActive();
 
-                if (CollisionHelper.isCollidingWithAnyPortal(((Entity) (Object) this)) && collidingportal.getActive() && !recentlyTouchedPortal) {
-                    world.playSound(null, this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), ThinkingWithPortatosSounds.ENTITY_ENTER_PORTAL, SoundCategory.NEUTRAL, .1F, 1F);
-                    recentlyTouchedPortal = true;
-                }
-
-                if (!CollisionHelper.isCollidingWithAnyPortal(((Entity) (Object) this)) && collidingportal.getActive() && recentlyTouchedPortal) {
-                    world.playSound(null, this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), ThinkingWithPortatosSounds.ENTITY_EXIT_PORTAL, SoundCategory.NEUTRAL, .1F, 1F);
-                    recentlyTouchedPortal = false;
-                }
-            }
-        }
 
         if (maxFallSpeed == 10 && world.getBlockState(this.getBlockPos()).getBlock() == ThinkingWithPortatosBlocks.PROPULSION_GEL) {
             maxFallSpeed = 10;
@@ -288,25 +227,7 @@ public abstract class EntityMixin implements EntityAttachments, VelocityTransfer
         this.speedTransformApply = speedValueTransferDuck;
     }
 
-    @Inject(method = "remove", at = @At("HEAD"), cancellable = true)
-    public void remove(CallbackInfo ci) {
-        if (!world.isClient) {
-            for (CustomPortalEntity checkedportal : portalList) {
-                if (checkedportal != null) {
-                    if (!checkedportal.getOutline().equals("null")) {
-                        PortalPlaceholderEntity portalOutline;
-                        portalOutline = (PortalPlaceholderEntity) ((ServerWorld) world).getEntity(UUID.fromString(checkedportal.getOutline()));
-                        assert portalOutline != null;
-                        if (portalOutline != null) {
-                            portalOutline.kill();
-                        }
-                    }
-                    world.playSound(null, checkedportal.getPos().getX(), checkedportal.getPos().getY(), checkedportal.getPos().getZ(), ThinkingWithPortatosSounds.ENTITY_PORTAL_CLOSE, SoundCategory.NEUTRAL, .1F, 1F);
-                    checkedportal.kill();
-                }
-            }
-        }
-    }
+
 
 
     /*----------
@@ -318,24 +239,5 @@ public abstract class EntityMixin implements EntityAttachments, VelocityTransfer
     }
     ----------*/
 
-    @Inject(method = "fall", at = @At("HEAD"), cancellable = true)
-    protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition, CallbackInfo ci) {
-        if (ThinkingWithPortatos.getBodyGrabbingManager(world.isClient).isGrabbed((Entity) (Object) this)) {
-            ci.cancel();
-        }
-    }
 
-    @Inject(method = "move", at = @At("HEAD"), cancellable = true)
-    public void move(MovementType type, Vec3d movement, CallbackInfo ci) {
-        if (ThinkingWithPortatos.getBodyGrabbingManager(world.isClient).isGrabbed((Entity) (Object) this)) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "getVelocity", at = @At("HEAD"), cancellable = true)
-    public void getVelocity(CallbackInfoReturnable<Vec3d> ci) {
-        if (ThinkingWithPortatos.getBodyGrabbingManager(world.isClient).isGrabbed((Entity) (Object) this)) {
-            ci.setReturnValue(Vec3d.ZERO);
-        }
-    }
 }
