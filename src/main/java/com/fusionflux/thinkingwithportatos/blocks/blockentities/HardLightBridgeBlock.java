@@ -13,6 +13,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import org.jetbrains.annotations.Nullable;
 
 // TODO replace with your own reference as appropriate
 
@@ -24,19 +25,11 @@ public class HardLightBridgeBlock extends BlockWithEntity {
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new HardLightBridgeBlockEntity();
-    }
-
-    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(Properties.FACING);
     }
 
-    @Override
-    public VoxelShape getVisualShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.empty();
-    }
+
 
     @Override
     @Environment(EnvType.CLIENT)
@@ -76,5 +69,10 @@ public class HardLightBridgeBlock extends BlockWithEntity {
         if (stateFrom.isOf(ThinkingWithPortatosBlocks.HLB_EMITTER_BLOCK)) {
             return stateFrom.get(Properties.POWERED);
         } else return stateFrom.isOf(ThinkingWithPortatosBlocks.HLB_BLOCK);
+    }
+
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new HardLightBridgeBlockEntity(pos,state);
     }
 }

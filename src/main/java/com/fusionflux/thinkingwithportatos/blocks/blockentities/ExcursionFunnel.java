@@ -15,6 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 
 public class ExcursionFunnel extends BlockWithEntity {
@@ -24,10 +25,6 @@ public class ExcursionFunnel extends BlockWithEntity {
         super(settings);
     }
 
-    @Override
-    public VoxelShape getVisualShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
-    }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -39,10 +36,7 @@ public class ExcursionFunnel extends BlockWithEntity {
         return SHAPE;
     }
 
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new ExcursionFunnelEntity();
-    }
+
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -108,4 +102,8 @@ public class ExcursionFunnel extends BlockWithEntity {
         }
     }
 
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ExcursionFunnelEntity(pos,state);
+    }
 }

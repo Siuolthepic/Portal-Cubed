@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -30,10 +31,7 @@ public class NeurotoxinEmitterBlock extends BlockWithEntity {
     }
 
 
-    @Override
-    public VoxelShape getVisualShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
-    }
+
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -55,10 +53,7 @@ public class NeurotoxinEmitterBlock extends BlockWithEntity {
         return BlockRenderType.MODEL;
     }
 
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new NeurotoxinEmitterBlockEntity();
-    }
+
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -84,6 +79,8 @@ public class NeurotoxinEmitterBlock extends BlockWithEntity {
     }
 
 
-
-
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new NeurotoxinEmitterBlockEntity(pos,state);
+    }
 }

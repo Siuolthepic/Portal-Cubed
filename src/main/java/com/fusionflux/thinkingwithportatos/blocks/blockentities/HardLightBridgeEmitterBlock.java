@@ -17,6 +17,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -29,10 +30,6 @@ public class HardLightBridgeEmitterBlock extends BlockWithEntity {
     }
 
 
-    @Override
-    public VoxelShape getVisualShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.empty();
-    }
 
     @Override
     @Environment(EnvType.CLIENT)
@@ -50,10 +47,8 @@ public class HardLightBridgeEmitterBlock extends BlockWithEntity {
         return BlockRenderType.MODEL;
     }
 
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new HardLightBridgeEmitterBlockEntity();
-    }
+
+
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -86,4 +81,8 @@ public class HardLightBridgeEmitterBlock extends BlockWithEntity {
         } else return stateFrom.isOf(ThinkingWithPortatosBlocks.HLB_BLOCK);
     }
 
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new HardLightBridgeEmitterBlockEntity(pos,state);
+    }
 }

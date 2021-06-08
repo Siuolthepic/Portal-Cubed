@@ -22,10 +22,7 @@ public class NeurotoxinBlock extends BlockWithEntity {
         super(settings);
     }
 
-    @Override
-    public VoxelShape getVisualShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
-    }
+
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -37,11 +34,7 @@ public class NeurotoxinBlock extends BlockWithEntity {
         return VoxelShapes.empty();
     }
 
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new NeurotoxinBlockEntity();
-    }
+
 
     @Override
     public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
@@ -60,4 +53,8 @@ public class NeurotoxinBlock extends BlockWithEntity {
         }
     }
 
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new NeurotoxinBlockEntity(pos,state);
+    }
 }

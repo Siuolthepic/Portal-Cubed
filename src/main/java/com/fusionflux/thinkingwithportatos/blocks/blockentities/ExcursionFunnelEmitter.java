@@ -19,6 +19,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -66,10 +67,7 @@ public class ExcursionFunnelEmitter extends BlockWithEntity {
         return voxelShape;
     }
 
-    @Override
-    public VoxelShape getVisualShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return method_31018(state);
-    }
+
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -97,10 +95,7 @@ public class ExcursionFunnelEmitter extends BlockWithEntity {
         return BlockRenderType.MODEL;
     }
 
-    @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new ExcursionFunnelEmitterEntity();
-    }
+
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -160,4 +155,8 @@ public class ExcursionFunnelEmitter extends BlockWithEntity {
         }
     }
 
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ExcursionFunnelEmitterEntity(pos,state);
+    }
 }
