@@ -1,6 +1,5 @@
 package com.fusionflux.thinkingwithportatos.client.render.model.entity;
 
-import com.fusionflux.thinkingwithportatos.entity.CubeEntity;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModel;

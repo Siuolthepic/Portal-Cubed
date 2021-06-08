@@ -37,9 +37,6 @@ dependencies {
 		exclude(module: "fabric-api")
 	}
 
-	modImplementation ("com.github.LazuriteMC:Rayon:${project.rayon_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
 }
 
 processResources {

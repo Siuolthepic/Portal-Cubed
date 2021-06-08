@@ -2,7 +2,6 @@ package com.fusionflux.thinkingwithportatos.client.render;
 
 import com.fusionflux.thinkingwithportatos.ThinkingWithPortatos;
 import com.fusionflux.thinkingwithportatos.client.render.model.entity.CubeEntityModel;
-import com.fusionflux.thinkingwithportatos.entity.CubeEntity;
 import dev.lazurite.rayon.core.impl.util.math.QuaternionHelper;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
