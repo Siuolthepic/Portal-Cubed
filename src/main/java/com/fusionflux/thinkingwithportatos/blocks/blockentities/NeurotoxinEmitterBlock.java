@@ -3,6 +3,8 @@ package com.fusionflux.thinkingwithportatos.blocks.blockentities;
 import com.fusionflux.thinkingwithportatos.blocks.ThinkingWithPortatosBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -83,4 +85,10 @@ public class NeurotoxinEmitterBlock extends BlockWithEntity {
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new NeurotoxinEmitterBlockEntity(pos,state);
     }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, ThinkingWithPortatosBlocks.NEUROTOXIN_EMITTER_ENTITY, NeurotoxinEmitterBlockEntity::tick);
+    }
+
 }

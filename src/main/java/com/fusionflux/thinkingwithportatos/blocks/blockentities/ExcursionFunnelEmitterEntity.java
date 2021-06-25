@@ -119,6 +119,11 @@ public class ExcursionFunnelEmitterEntity extends BlockEntity {
         extendPos.move(facing, extensionTicks);
         ++extensionTicks;
         for (int i = 0; i < BLOCKS_PER_TICK; i++) {
+            if(extendPos.getY()+1>=world.getHeight()){
+                bridgeComplete = true;
+                shouldExtend = false;
+                break;
+            }
             if (extensionTicks <= EXTENSION_TIME) {
                 if (world.getBlockState(extendPos).getBlock().equals(ThinkingWithPortatosBlocks.EXCURSION_FUNNEL)) {
                     ((ExcursionFunnelEntity) Objects.requireNonNull(world.getBlockEntity(extendPos))).emitters.add(new BlockPos.Mutable(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -136,7 +141,10 @@ public class ExcursionFunnelEmitterEntity extends BlockEntity {
                 shouldExtend = false;
                 break;
             }
+
+
             extendPos.move(facing);
+
         }
 
         obstructorPos.set(extendPos);

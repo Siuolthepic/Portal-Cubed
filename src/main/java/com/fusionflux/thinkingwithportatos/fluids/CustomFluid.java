@@ -46,7 +46,7 @@ public class CustomFluid extends FlowableFluid {
      */
     @Override
     protected void beforeBreakingBlock(WorldAccess world, BlockPos pos, BlockState state) {
-        final BlockEntity blockEntity = state.getBlock().hasBlockEntity() ? world.getBlockEntity(pos) : null;
+        final BlockEntity blockEntity = world.getBlockEntity(pos);
         Block.dropStacks(state, world, pos, blockEntity);
     }
 

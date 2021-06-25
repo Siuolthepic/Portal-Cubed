@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvent;
@@ -78,7 +79,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             }
         }*/
 
-        /*double reduceGravity = .06666666666;
+  /*      double reduceGravity = .06666666666;
         double gravityBalancer = 1;
             if (this.isTouchingWater()) {
                 gravityBalancer = gravityBalancer * .02;

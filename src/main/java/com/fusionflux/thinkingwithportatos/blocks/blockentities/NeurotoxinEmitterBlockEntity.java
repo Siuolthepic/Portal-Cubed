@@ -23,6 +23,8 @@ public class NeurotoxinEmitterBlockEntity extends BlockEntity {
         this.obstructorPos = pos.mutableCopy();
     }
 
+
+
     public static void tick(World world, BlockPos pos, BlockState state, NeurotoxinEmitterBlockEntity blockEntity) {
         assert world != null;
         if (!world.isClient) {
