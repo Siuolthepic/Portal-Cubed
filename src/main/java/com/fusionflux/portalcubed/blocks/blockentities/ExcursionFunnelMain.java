@@ -3,6 +3,7 @@ package com.fusionflux.portalcubed.blocks.blockentities;
 import com.fusionflux.portalcubed.blocks.PortalCubedBlocks;
 import com.fusionflux.portalcubed.entity.EntityAttachments;
 import com.fusionflux.portalcubed.util.CustomProperties;
+import com.google.common.collect.ImmutableMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.*;
@@ -19,12 +20,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 public class ExcursionFunnelMain extends BlockWithEntity {
@@ -41,23 +45,67 @@ public class ExcursionFunnelMain extends BlockWithEntity {
     public static final BooleanProperty RWEST;
     public static final BooleanProperty RUP;
     public static final BooleanProperty RDOWN;
+    public static final BooleanProperty BNORTH;
+    public static final BooleanProperty BEAST;
+    public static final BooleanProperty BSOUTH;
+    public static final BooleanProperty BWEST;
 
-    protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+    protected static final VoxelShape SHAPE = Block.createCuboidShape(2.0D, 12.0D, 0.0D, 14.0D, 13.0D, 16.0D);
+    protected static final VoxelShape SHAPEROTATED = Block.createCuboidShape(0.0D, 12.0D, 2.0D, 16.0D, 13.0D, 14.0D);
+
+    private final Map<BlockState, VoxelShape> field_26659;
 
     public ExcursionFunnelMain(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(NORTH, false).with(EAST, false).with(SOUTH, false).with(WEST, false).with(UP, false).with(DOWN, false).with(RNORTH, false).with(REAST, false).with(RSOUTH, false).with(RWEST, false).with(RUP, false).with(RDOWN, false));
+        this.setDefaultState(this.stateManager.getDefaultState().with(NORTH, false).with(EAST, false).with(SOUTH, false).with(WEST, false).with(UP, false).with(DOWN, false).with(RNORTH, false).with(REAST, false).with(RSOUTH, false).with(RWEST, false).with(RUP, false).with(RDOWN, false)
+                .with(BNORTH, false).with(BEAST, false).with(BSOUTH, false).with(BWEST, false));
+        this.field_26659 = ImmutableMap.copyOf((Map) this.stateManager.getStates().stream().collect(Collectors.toMap(Function.identity(), ExcursionFunnelMain::method_31018)));
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        return this.field_26659.get(state);
     }
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        return this.field_26659.get(state);
     }
+
+    private static VoxelShape method_31018(BlockState blockState) {
+        VoxelShape voxelShape = VoxelShapes.empty();
+
+
+        /*if (blockState.get(Properties.FACING)==Direction.NORTH) {
+            voxelShape =SHAPE;
+        }
+
+        if (blockState.get(Properties.FACING)==Direction.SOUTH) {
+            voxelShape = SHAPE;
+        }
+
+        if (blockState.get(Properties.FACING)==Direction.EAST) {
+            voxelShape = SHAPEROTATED;
+        }
+
+        if (blockState.get(Properties.FACING)==Direction.WEST) {
+            voxelShape = SHAPEROTATED;
+        }*/
+
+        if (blockState.get(BWEST)||blockState.get(BEAST)) {
+            voxelShape = VoxelShapes.union(voxelShape, SHAPEROTATED);
+        }
+
+        if (blockState.get(BNORTH)||blockState.get(BSOUTH)) {
+            voxelShape = VoxelShapes.union(voxelShape, SHAPE);
+        }
+
+
+
+
+        return voxelShape;
+    }
+
 
 
     static {
@@ -73,12 +121,16 @@ public class ExcursionFunnelMain extends BlockWithEntity {
         RWEST = CustomProperties.RWEST;
         RUP = CustomProperties.RUP;
         RDOWN = CustomProperties.RDOWN;
+        BNORTH = CustomProperties.BNORTH;
+        BEAST = CustomProperties.BEAST;
+        BSOUTH = CustomProperties.BSOUTH;
+        BWEST = CustomProperties.BWEST;
     }
 
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.FACING,NORTH, EAST, WEST, SOUTH, UP, DOWN, RNORTH, REAST, RWEST, RSOUTH, RUP, RDOWN);
+        builder.add(NORTH, EAST, WEST, SOUTH, UP, DOWN, RNORTH, REAST, RWEST, RSOUTH, RUP, RDOWN, BNORTH, BEAST, BWEST, BSOUTH);
     }
 
 
@@ -199,12 +251,15 @@ public class ExcursionFunnelMain extends BlockWithEntity {
 
 
     private void addCollisionEffects(World world, Entity entity, BlockPos pos,BlockState state) {
+        Vec3d direction = getPushDirection(state);
+
+        if(direction != Vec3d.ZERO)
         if(entity instanceof PlayerEntity) {
             if (world.isClient()) {
                 double xoffset = (entity.getPos().getX() - pos.getX()) - .5;
                 double yoffset = ((entity.getPos().getY()+entity.getHeight()/2) - pos.getY()) - .5;
                 double zoffset = (entity.getPos().getZ() - pos.getZ()) - .5;
-                Vec3d direction = getPushDirection(state);
+
                 direction = direction.multiply(.05);
 
                 entity.setNoGravity(true);
@@ -239,7 +294,7 @@ public class ExcursionFunnelMain extends BlockWithEntity {
                 double xoffset = (entity.getPos().getX() - pos.getX()) - .5;
                 double yoffset = ((entity.getPos().getY()+entity.getHeight()/2) - pos.getY()) - .5;
                 double zoffset = (entity.getPos().getZ() - pos.getZ()) - .5;
-                Vec3d direction = getPushDirection(state);
+
                 direction = direction.multiply(.05);
 
                 entity.setNoGravity(true);
