@@ -49,7 +49,6 @@ public class HardLightBridgeEmitterBlockEntity extends BlockEntity {
         }
 
         startPos = startPos.add(new Vec3d(invertDirection.x*0.375,invertDirection.y*0.8125,invertDirection.z*0.375));
-        System.out.println(startPos);
         if (!world.isClient) {
             boolean redstonePowered = world.isReceivingRedstonePower(blockEntity.getPos());
             Vec3d entityPos = new Vec3d(pos.getX(),pos.getY(),pos.getZ());
